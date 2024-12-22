@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-import discord
 import os
-import unicodedata
-import time
-from tabulate import tabulate
-from urllib3 import Retry
-
-
+import discord
 
 from dotenv import load_dotenv
 load_dotenv()
+
+bot = discord.Bot()
+
 
 def get_generic_embed():
     out = discord.Embed(title = "**title**", color = 0xffffff)
@@ -19,24 +16,16 @@ def get_generic_embed():
     out.add_field(name="Field 2 (Inline)", value="Field 2 Value", inline=True)
     return out
 
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(intents=intents)
-
-
-@client.event
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print(f"We have logged in as {bot.user}")
+@bot.slash_command(name="cshow", description="any part of the card name you want to search")
+async def cshow(ctx, *, arg):
+    search_string = arg
+    await ctx.send('search string: "' + search_string + '"')
+    embed = get_generic_embed()
+    print('sending embed')
+    await ctx.respond(embed = embed)
+    return
 
-# set as slash command later
-@client.event
-async def on_message(message):
-    if any(map(message.content.startswith, "test")):
-        embed = get_generic_embed()
-        print('sending embed')
-        await message.channel.send("Card Title")
-        await message.channel.send(embed = embed)
-        return
-
-client.run(os.environ['TOKEN'])
+bot.run(os.getenv('TOKEN'))

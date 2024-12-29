@@ -163,3 +163,4 @@ cython_debug/
 
 
 # Below: Repo-specific ignores
+data.json

@@ -96,10 +96,11 @@ def get_embed_for_card(card, full_size):
 
             embed.add_field(name=f'( {cost_str_pretty} {art_desc}', value='', inline=False)
 
-
         return get_holomem_embed(card, embed)
+    embed.add_field(name=card["ability_text"], value='', inline=False)
     return get_support_embed(card, embed) # maybe add cheer/yell/eeru later? could also rename to "get other card embed"
 
+# was going to extract all the specific happenings for each card into these functions later but might not end up doing that
 def get_oshi_holomem_embed(card, embed):
     return embed
 
@@ -141,22 +142,22 @@ find_top_cards(["white","","typeholomem","arts"])
 
 # TODO: work on search feature
 
-# @bot.event
-# async def on_ready():
-#     print(f"We have logged in as {bot.user}")
-# @bot.slash_command(name="cshow", description="any part of the card name you want to search")
-# async def cshow(ctx, *, arg):
-#     search_strings = arg.split(" ")
-#     search_strings_debug = ''
-#     for str in search_strings:
-#         search_strings_debug += f'{str}, '
-#     search_strings_debug = search_strings_debug.rstrip(',')
-#     await ctx.send(f'searcsh strings: {search_strings_debug}')
-#     embed = get_generic_embed()
-#     print('sending embed')
-#     await ctx.respond(embed = embed)
-#     await ctx.send(embed = get_full_image_embed())
-#     return
+@bot.event
+async def on_ready():
+    print(f"We have logged in as {bot.user}")
+@bot.slash_command(name="cshow", description="any part of the card name you want to search")
+async def cshow(ctx, *, arg):
+    search_strings = arg.split(" ")
+    search_strings_debug = ''
+    for str in search_strings:
+        search_strings_debug += f'{str}, '
+    search_strings_debug = search_strings_debug.rstrip(',')
+    await ctx.send(f'searcsh strings: {search_strings_debug}')
+    embed = get_generic_embed()
+    print('sending embed')
+    await ctx.respond(embed = embed)
+    await ctx.send(embed = get_full_image_embed())
+    return
 
 @bot.slash_command(name="cshowid", description="debug command: search card directly by ID")
 async def cshowid(ctx, arg):

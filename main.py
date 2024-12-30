@@ -61,6 +61,21 @@ def get_color_emoji_tokkou(c):
         return "<:tokkou_50_purple:1322065574834077752>"
     # going to need to add yellow later
     return "<:tokkou_50_null:1322065560187572366>" # default to colorless/null
+
+def get_bloom_level_emoji(level):
+    if (level.lower() == "debut"):
+        return "<:debut:1323350942875385940>"
+    if (level.lower() == "1st"):
+        return "<:1st:1323350839850438770>"
+    if (level.lower() == "2nd"):
+        return "<:2nd:1323350857479229592>"
+    if (level.lower() == "spot"):
+        return "<:spot:1323350993508765726>"
+    return ""
+def get_buzz_emoji(type):
+    if ("buzz" in type.lower()):
+        return "<:buzz:1323350892484755566>"
+    return ""
 def get_embed_for_card(card, full_size):
     title = card["name"]
     if ("color" in card):
@@ -69,14 +84,13 @@ def get_embed_for_card(card, full_size):
     embed = discord.Embed(title=title, thumbnail=card["image_url"], )
     if(full_size):
         embed = discord.Embed(title=title, image=card["image_url"], description=card["type"])
+    embed.set_footer(text=card["id"])
 
-    
     if ("ホロメン" in card["type"]):
         if("推し" in card["type"]):
             return get_oshi_holomem_embed(card, embed)
-        quick_info_string = f'(need emoji){card["bloom_level"]} / HP {card["hp"]} / {card["name"]}'
+        quick_info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
         embed.add_field(name=quick_info_string, value="", inline=False)
-
         # arts section
         arts = card["arts"]
 
@@ -98,6 +112,8 @@ def get_embed_for_card(card, full_size):
 
         return get_holomem_embed(card, embed)
     embed.add_field(name=card["ability_text"], value='', inline=False)
+
+
     return get_support_embed(card, embed) # maybe add cheer/yell/eeru later? could also rename to "get other card embed"
 
 # was going to extract all the specific happenings for each card into these functions later but might not end up doing that

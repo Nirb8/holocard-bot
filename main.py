@@ -88,6 +88,10 @@ def get_embed_for_card(card, full_size):
 
     if ("ホロメン" in card["type"]):
         if("推し" in card["type"]):
+            # divider
+            embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
+            # barebones TL text, need to make the arts cost pretty for holomem
+            embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
             return get_oshi_holomem_embed(card, embed)
         quick_info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
         embed.add_field(name=quick_info_string, value="", inline=False)
@@ -103,18 +107,29 @@ def get_embed_for_card(card, full_size):
             art_desc += "   " + art["damage"]
             if("tokkou" in art):
                 art_desc += "   " + get_color_emoji_tokkou(art["tokkou"])+" )  "
+            else:
+                art_desc += " )  "
             if(art["text"] == ""):
                 art_desc += art["name"]
             else:
                 art_desc += art["name"] + ": " + art["text"]
 
             embed.add_field(name=f'( {cost_str_pretty} {art_desc}', value='', inline=False)
-
+        # divider
+        embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
+        # barebones TL text, need to make the arts cost pretty for holomem
+        embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
         return get_holomem_embed(card, embed)
     embed.add_field(name=card["ability_text"], value='', inline=False)
-
-
+    # divider
+    embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
+    # barebones TL text
+    embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
     return get_support_embed(card, embed) # maybe add cheer/yell/eeru later? could also rename to "get other card embed"
+
+def add_divider(embed):
+    embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
+    return
 
 # was going to extract all the specific happenings for each card into these functions later but might not end up doing that
 def get_oshi_holomem_embed(card, embed):

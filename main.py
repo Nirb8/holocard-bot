@@ -89,7 +89,7 @@ def get_embed_for_card(card, full_size):
     if ("ホロメン" in card["type"]):
         if("推し" in card["type"]):
             # divider
-            embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
+            add_divider(embed)
             # barebones TL text, need to make the arts cost pretty for holomem
             embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
             return get_oshi_holomem_embed(card, embed)

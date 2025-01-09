@@ -11,7 +11,7 @@ bot = discord.Bot()
 def load_json():
 
     # Open the JSON file and read its contents
-    with open('data.json', 'r') as file:
+    with open('data.json', 'r', encoding="utf-8") as file:
         data = json.load(file)
 
     # print(data)
@@ -76,6 +76,21 @@ def get_buzz_emoji(type):
     if ("buzz" in type.lower()):
         return "<:buzz:1323350892484755566>"
     return ""
+
+# added a func that searches for tags on cards and adds to the embed -Zach
+def get_tags_for_card(card, embed, EN):
+    tags = ''
+    tagstring = ''
+    if EN == True:
+        tags = card["translated_content_en"]["tags"]
+    else:
+        tags = card["tags"]
+    if not tags or tags[0] == "":
+        return 0
+    for tag in tags:
+        tagstring += tag + ' '
+    return embed.add_field(name="Tags", value=tagstring, inline=False)
+
 def get_embed_for_card(card, full_size):
     title = card["name"]
     if ("color" in card):
@@ -84,7 +99,14 @@ def get_embed_for_card(card, full_size):
     embed = discord.Embed(title=title, thumbnail=card["image_url"], )
     if(full_size):
         embed = discord.Embed(title=title, image=card["image_url"], description=card["type"])
-    embed.set_footer(text=card["id"])
+    
+    #Changed the way the footer works to build a string cuz I wanted the trivial info down there
+    #So it now adds the illustrator assuming there is one. -Zach
+    foot = ''
+    foot = card["id"]
+    if("illustrator" in card):
+        foot = foot + '\nIllustrator: ' + card["illustrator"]
+    embed.set_footer(text=foot)
 
     if ("ホロメン" in card["type"]):
         if("推し" in card["type"]):
@@ -115,17 +137,31 @@ def get_embed_for_card(card, full_size):
                 art_desc += art["name"] + ": " + art["text"]
 
             embed.add_field(name=f'( {cost_str_pretty} {art_desc}', value='', inline=False)
+
+        # tags section
+        get_tags_for_card(card, embed, False)
+        
         # divider
         embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
         # barebones TL text, need to make the arts cost pretty for holomem
         embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
+        get_tags_for_card(card, embed, True)
         return get_holomem_embed(card, embed)
+
     embed.add_field(name=card["ability_text"], value='', inline=False)
+    get_tags_for_card(card, embed, False)
     # divider
     embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)
     # barebones TL text
     embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
+    get_tags_for_card(card, embed, True)
+
+    
+
+
     return get_support_embed(card, embed) # maybe add cheer/yell/eeru later? could also rename to "get other card embed"
+
+    
 
 def add_divider(embed):
     embed.add_field(name="```────────────────────────────────────────────────────────```", value="", inline=False)

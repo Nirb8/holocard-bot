@@ -219,15 +219,15 @@ async def cshowidfull(ctx, arg):
     embed = get_embed_for_card(card_dict[search_id], True)
     await ctx.respond(embed = embed)
 
-@bot.slash_command(name="holomen",description="debug command: search holomen card directly by Bloom lvl, Name, HP. The name argument supports Japanese or English translations. Also uses full image embed instead of thumbnail")
+@bot.slash_command(name="holomen",description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
     return
 
-@bot.slash_command(name="support", description="debug command: search support card directly by Name. The name argument supports Japanese or English translations. Also uses full image embed instead of thumbnail")
+@bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_support(ctx, arg):
     return
 
-@bot.slash_command(name="oshi-holomen", description="debug command: search oshi-holomen card directly by Name. The name argument supports Japanese or English translations. Also uses full image embed instead of thumbnail")
+@bot.slash_command(name="oshi-holomen", description="search oshi holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_oshi_holomen(ctx, arg):
     return
 

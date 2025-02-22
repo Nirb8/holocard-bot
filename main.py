@@ -8,13 +8,27 @@ load_dotenv()
 
 bot = discord.Bot()
 
-def load_json():
 
+holomen_dict = {}
+support_dict = {}
+oshi_holomen_dict = {}
+
+def load_json():
     # Open the JSON file and read its contents
     with open('data.json', 'r') as file:
         data = json.load(file)
-    # print(data)
-    return data
+
+    dict = data
+
+    for card_id, card in card_dict.items():
+        card_type = card.get('type')
+        if card_type == 'ホロメン' or 'buzz' in card_type.lower():
+            holomen_dict[card_id] = card
+        elif card_type == 'サポート':
+            support_dict[card_id] = card
+        elif card_type == '推しホロメン':
+            oshi_holomen_dict[card_id] = card
+    return dict
 
 card_dict = load_json()
 
@@ -221,15 +235,15 @@ async def cshowidfull(ctx, arg):
 
 @bot.slash_command(name="holomen", description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
-    search_strings = arg.split(" ")
-    results = []
+    search_bloom_level, search_name, search_hp = arg.split(" ")
+    results = [
+        card for card in holomen_dict.values()
+        if (search_bloom_level.lower() in card["bloom_level"].lower() and
+            search_name.lower() in card["translated_content_en"]["name"].lower() and
+            search_hp.lower() in card["hp"].lower())
+    ]
 
-    # currently only matches if all conditions are met
-    for card in card_dict.values():
-        if all(search_str.lower() in card["search_string"].lower() for search_str in search_strings):
-            results.append(card)
-
-    print(f"Found {len(results)} results: {[card['id'] for card in results]}")
+    await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")
 
     if not results:
         await ctx.respond("No results found.")

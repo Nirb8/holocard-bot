@@ -13,7 +13,6 @@ def load_json():
     # Open the JSON file and read its contents
     with open('data.json', 'r') as file:
         data = json.load(file)
-
     # print(data)
     return data
 
@@ -77,7 +76,7 @@ def get_buzz_emoji(type):
         return "<:buzz:1323350892484755566>"
     return ""
 def get_embed_for_card(card, full_size):
-    title = card["name"]
+    title = card["translated_content_en"]["name"]
     if ("color" in card):
         title = f'{get_color_emoji(card["color"])}{title}'
     # do generic fields
@@ -230,6 +229,8 @@ async def show_holomen(ctx, arg):
         if all(search_str.lower() in card["search_string"].lower() for search_str in search_strings):
             results.append(card)
 
+    print(f"Found {len(results)} results: {[card['id'] for card in results]}")
+
     if not results:
         await ctx.respond("No results found.")
         return
@@ -238,23 +239,28 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        class AbilityModal(discord.ui.Modal):
+        class AbilityDropdown(discord.ui.Select):
             def __init__(self, cards):
-                super().__init__(title="Select Character Abilities")
+                options = [
+                    discord.SelectOption(label=card["translated_content_en"]["name"],
+                                         description=card["translated_content_en"]["text"], value=card["id"])
+                    for card in cards
+                ]
+                super().__init__(placeholder="Select a character ability...", min_values=1, max_values=1,
+                                 options=options)
                 self.cards = cards
-                self.add_item(discord.ui.InputText(label="Enter the character's abilities"))
 
             async def callback(self, interaction: discord.Interaction):
-                abilities = self.children[0].value
-                for c in self.cards:
-                    if abilities.lower() in c["search_string"].lower():
-                        embed = get_embed_for_card(c, True)
+                selected_card_id = self.values[0]
+                for card in self.cards:
+                    if card["id"] == selected_card_id:
+                        embed = get_embed_for_card(card, True)
                         await interaction.response.send_message(embed=embed)
                         return
                 await interaction.response.send_message("No matching abilities found.", ephemeral=True)
 
-        modal = AbilityModal(results)
-        await ctx.send_modal(modal)
+        dropdown = AbilityDropdown(results)
+        await ctx.send(dropdown, ephemeral=True)
         return
 
 @bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")

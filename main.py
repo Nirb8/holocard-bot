@@ -260,7 +260,7 @@ async def show_holomen(ctx, arg):
                 await interaction.response.send_message("No matching abilities found.", ephemeral=True)
 
         dropdown = AbilityDropdown(results)
-        await ctx.send(dropdown, ephemeral=True)
+        await ctx.respond(dropdown, ephemeral=True)
         return
 
 @bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")

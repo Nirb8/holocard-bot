@@ -8,7 +8,6 @@ load_dotenv()
 
 bot = discord.Bot()
 
-
 holomen_dict = {}
 support_dict = {}
 oshi_holomen_dict = {}
@@ -18,9 +17,7 @@ def load_json():
     with open('data.json', 'r') as file:
         data = json.load(file)
 
-    dict = data
-
-    for card_id, card in card_dict.items():
+    for card_id, card in data.items():
         card_type = card.get('type')
         if card_type == 'ホロメン' or 'buzz' in card_type.lower():
             holomen_dict[card_id] = card
@@ -28,7 +25,7 @@ def load_json():
             support_dict[card_id] = card
         elif card_type == '推しホロメン':
             oshi_holomen_dict[card_id] = card
-    return dict
+    return data
 
 card_dict = load_json()
 
@@ -258,7 +255,7 @@ async def show_holomen(ctx, arg):
                 options = [
                     discord.SelectOption(label="OPTION 1",
                                          description="Option Description",
-                                         value=card["id"])
+                                         value="Pick Me!")
                 ]
                 super().__init__(placeholder="Select a character ability...", min_values=1, max_values=1,
                                  options=options)

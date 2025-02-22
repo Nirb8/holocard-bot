@@ -219,7 +219,8 @@ async def cshowidfull(ctx, arg):
     embed = get_embed_for_card(card_dict[search_id], True)
     await ctx.respond(embed = embed)
 
-@bot.slash_command(name="holomen",description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
+
+@bot.slash_command(name="holomen", description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
     search_strings = arg.split(" ")
     results = []
@@ -232,9 +233,11 @@ async def show_holomen(ctx, arg):
     if not results:
         await ctx.respond("No results found.")
         return
-
+    elif len(results) == 1:
+        embed = get_embed_for_card(results[0], True)
+        await ctx.respond(embed=embed)
     # handle multiple results
-    if len(results) > 1:
+    else:
         class AbilityModal(discord.ui.Modal):
             def __init__(self, cards):
                 super().__init__(title="Select Character Abilities")

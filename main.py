@@ -221,7 +221,38 @@ async def cshowidfull(ctx, arg):
 
 @bot.slash_command(name="holomen",description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
-    return
+    search_strings = arg.split(" ")
+    results = []
+
+    # currently only matches if all conditions are met
+    for card in card_dict.values():
+        if all(search_str.lower() in card["search_string"].lower() for search_str in search_strings):
+            results.append(card)
+
+    if not results:
+        await ctx.respond("No results found.")
+        return
+
+    # handle multiple results
+    if len(results) > 1:
+        class AbilityModal(discord.ui.Modal):
+            def __init__(self, cards):
+                super().__init__(title="Select Character Abilities")
+                self.cards = cards
+                self.add_item(discord.ui.InputText(label="Enter the character's abilities"))
+
+            async def callback(self, interaction: discord.Interaction):
+                abilities = self.children[0].value
+                for c in self.cards:
+                    if abilities.lower() in c["search_string"].lower():
+                        embed = get_embed_for_card(c, True)
+                        await interaction.response.send_message(embed=embed)
+                        return
+                await interaction.response.send_message("No matching abilities found.", ephemeral=True)
+
+        modal = AbilityModal(results)
+        await ctx.send_modal(modal)
+        return
 
 @bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_support(ctx, arg):

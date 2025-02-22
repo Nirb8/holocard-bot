@@ -2,6 +2,7 @@
 import os
 import discord
 import json
+from card_dropdown import CardDropdown
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -10,7 +11,7 @@ bot = discord.Bot()
 
 holomen_dict = {}
 support_dict = {}
-oshi_holomen_dict = {}
+oshi_dict = {}
 
 def load_json():
     # Open the JSON file and read its contents
@@ -24,7 +25,7 @@ def load_json():
         elif card_type == 'サポート':
             support_dict[card_id] = card
         elif card_type == '推しホロメン':
-            oshi_holomen_dict[card_id] = card
+            oshi_dict[card_id] = card
     return data
 
 card_dict = load_json()
@@ -260,35 +261,17 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        class CardDropdown(discord.ui.Select):
-            def __init__(self, cards):
-                options = [
-                    discord.SelectOption(label=card["id"], value=get_quick_info_string(card))
-                    for card in cards
-                ]
-                super().__init__(placeholder="Select a card...", min_values=1, max_values=len(cards), options=options)
-                self.cards = cards
-
-            async def callback(self, interaction: discord.Interaction):
-                selected_card_id = self.values[0]
-                for card in self.cards:
-                    if card["id"] == selected_card_id:
-                        embed = get_embed_for_card(card, True)
-                        await interaction.response.send_message(embed=embed)
-                        return
-                await interaction.response.send_message("No matching card found.")
-
         dropdown = CardDropdown(results)
         view = discord.ui.View()
         view.add_item(dropdown)
         await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
 
-@bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
+@bot.slash_command(name="support", description="search support card directly by Name. Supports Japanese or English translations.")
 async def show_support(ctx, arg):
     search_name = arg.lower()
     results = [
         card for card in support_dict.values()
-        if search_name in card["translated_content_en"]["name"].lower()
+        if fuzzy_match(search_name, card.get("translated_content_en", {}).get("name", ""))
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")
@@ -300,9 +283,29 @@ async def show_support(ctx, arg):
         embed = get_embed_for_card(results[0], True)
         await ctx.respond(embed=embed)
 
-@bot.slash_command(name="oshi-holomen", description="search oshi holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
+@bot.slash_command(name="oshi-holomen", description="search oshi-holomen card directly by Name. Supports Japanese or English translations.")
 async def show_oshi_holomen(ctx, arg):
-    return
+    args = arg.split(" ")
+    search_name = args[0]
+
+    results = [
+        card for card in oshi_dict.values()
+        if (fuzzy_match(search_name, card.get("translated_content_en", {}).get("name", "")))
+    ]
+
+    await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")
+
+    if not results:
+        await ctx.respond("No results found.")
+        return
+    elif len(results) == 1:
+        embed = get_embed_for_card(results[0], True)
+        await ctx.respond(embed=embed)
+    else:
+        dropdown = CardDropdown(results)
+        view = discord.ui.View()
+        view.add_item(dropdown)
+        await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
 
 bot.run(os.getenv('TOKEN'))
 

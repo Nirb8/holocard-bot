@@ -95,6 +95,23 @@ def get_embed_for_card(card, full_size):
             return get_oshi_holomem_embed(card, embed)
         quick_info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
         embed.add_field(name=quick_info_string, value="", inline=False)
+        # effects section
+        if ("bloom_effect" in card):
+            bloom = card["bloom_effect"]
+            bloom_title = f'<:bloom_effect:1323351068335411220>: {bloom["name"]}'
+            bloom_text = bloom["text"]
+            embed.add_field(name=bloom_title,value=bloom_text, inline=False)
+        if ("collab_effect" in card):
+            collab = card["collab_effect"]
+            collab_title = f'<:collab_effect:1323350914073100338>: {collab["name"]}'
+            collab_text = collab["text"]
+            embed.add_field(name=collab_title,value=collab_text, inline=False)
+        if ("gift_effect" in card):
+            gift = card["gift_effect"]
+            gift_title = f'<:gift:1323350975972380743>: {gift["name"]}'
+            gift_text = gift["text"]
+            embed.add_field(name=gift_title,value=gift_text, inline=False)
+
         # arts section
         arts = card["arts"]
 

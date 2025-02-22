@@ -186,7 +186,7 @@ def find_top_cards(to_search):
     print(results)
     return results
 
-find_top_cards(["white","","typeholomem","arts"])
+# find_top_cards(["white","","typeholomem","arts"])
 
 # TODO: work on search feature
 

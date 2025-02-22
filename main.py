@@ -86,6 +86,10 @@ def get_buzz_emoji(type):
     if ("buzz" in type.lower()):
         return "<:buzz:1323350892484755566>"
     return ""
+
+def get_quick_info_string(card):
+    return f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
+
 def get_embed_for_card(card, full_size):
     title = card["translated_content_en"]["name"]
     if ("color" in card):
@@ -103,8 +107,7 @@ def get_embed_for_card(card, full_size):
             # barebones TL text, need to make the arts cost pretty for holomem
             embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
             return get_oshi_holomem_embed(card, embed)
-        quick_info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
-        embed.add_field(name=quick_info_string, value="", inline=False)
+        embed.add_field(name=get_quick_info_string(card), value="", inline=False)
         # effects section
         if ("bloom_effect" in card):
             bloom = card["bloom_effect"]
@@ -196,9 +199,11 @@ def find_top_cards(to_search):
     print(results)
     return results
 
-# find_top_cards(["white","","typeholomem","arts"])
-
-# TODO: work on search feature
+def fuzzy_match(search_term, target):
+    search_term = search_term.lower()
+    target = target.lower()
+    matches = sum(1 for a, b in zip(search_term, target) if a == b)
+    return matches / max(len(search_term), len(target)) > 0.6
 
 @bot.event
 async def on_ready():
@@ -232,12 +237,17 @@ async def cshowidfull(ctx, arg):
 
 @bot.slash_command(name="holomen", description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
-    search_bloom_level, search_name, search_hp = arg.split(" ")
+    args = arg.split(" ")
+    search_bloom_level = args[0]
+    search_name = args[1]
+    search_hp = args[2] if len(args) > 2 else None
+
+    # Currently handles the case where translated_content_en is missing; eventually this can be removed
     results = [
         card for card in holomen_dict.values()
         if (search_bloom_level.lower() in card["bloom_level"].lower() and
-            search_name.lower() in card["translated_content_en"]["name"].lower() and
-            search_hp.lower() in card["hp"].lower())
+            fuzzy_match(search_name in card.get("translated_content_en", {}).get("name", "")) and
+            (search_hp is None or search_hp.lower() in card["hp"].lower()))
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")
@@ -250,15 +260,13 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        class AbilityDropdown(discord.ui.Select):
+        class CardDropdown(discord.ui.Select):
             def __init__(self, cards):
                 options = [
-                    discord.SelectOption(label="OPTION 1",
-                                         description="Option Description",
-                                         value="Pick Me!")
+                    discord.SelectOption(label=card["id"], value=get_quick_info_string(card))
+                    for card in cards
                 ]
-                super().__init__(placeholder="Select a character ability...", min_values=1, max_values=1,
-                                 options=options)
+                super().__init__(placeholder="Select a card...", min_values=1, max_values=len(cards), options=options)
                 self.cards = cards
 
             async def callback(self, interaction: discord.Interaction):
@@ -268,15 +276,29 @@ async def show_holomen(ctx, arg):
                         embed = get_embed_for_card(card, True)
                         await interaction.response.send_message(embed=embed)
                         return
-                await interaction.response.send_message("No matching abilities found.", ephemeral=True)
+                await interaction.response.send_message("No matching card found.")
 
-        dropdown = AbilityDropdown(results)
-        await ctx.respond(dropdown, ephemeral=True)
-        return
+        dropdown = CardDropdown(results)
+        view = discord.ui.View()
+        view.add_item(dropdown)
+        await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
 
 @bot.slash_command(name="support", description="search support card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_support(ctx, arg):
-    return
+    search_name = arg.lower()
+    results = [
+        card for card in support_dict.values()
+        if search_name in card["translated_content_en"]["name"].lower()
+    ]
+
+    await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")
+
+    if not results:
+        await ctx.respond("No results found.")
+        return
+    elif len(results) == 1:
+        embed = get_embed_for_card(results[0], True)
+        await ctx.respond(embed=embed)
 
 @bot.slash_command(name="oshi-holomen", description="search oshi holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_oshi_holomen(ctx, arg):

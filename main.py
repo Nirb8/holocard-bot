@@ -242,9 +242,9 @@ async def show_holomen(ctx, arg):
         class AbilityDropdown(discord.ui.Select):
             def __init__(self, cards):
                 options = [
-                    discord.SelectOption(label=card["translated_content_en"]["name"],
-                                         description=card["translated_content_en"]["text"], value=card["id"])
-                    for card in cards
+                    discord.SelectOption(label="OPTION 1",
+                                         description="Option Description",
+                                         value=card["id"])
                 ]
                 super().__init__(placeholder="Select a character ability...", min_values=1, max_values=1,
                                  options=options)

@@ -66,7 +66,6 @@ def find_top_cards(to_search):
                     results[card_id] += 1
                 else:
                     results[card_id] = 1
-    print(results)
     return results
 
 def fuzzy_match(search_term, target):
@@ -117,7 +116,6 @@ async def create_multiple_results_embed(ctx, results):
     dropdown = CardDropdown(results)
     view = discord.ui.View()
     view.add_item(dropdown)
-    await ctx.send(dropdown.options)
     await ctx.respond("Multiple results found. Please select a card:", embed=embed, view=view, ephemeral=True)
 
 

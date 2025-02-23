@@ -131,9 +131,10 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        desc = (get_quick_info_string(card, True) for card in results)
-        print(desc)
-        embed = discord.Embed(title="Results", description=desc)
+        desc = [get_quick_info_string(card, True) for card in results]
+        card_info = "\n".join(desc)
+        print(card_info)
+        embed = discord.Embed(title="Results", description=card_info)
 
         dropdown = CardDropdown(results)
         view = discord.ui.View()

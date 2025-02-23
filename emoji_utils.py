@@ -79,7 +79,7 @@ def get_quick_info_string(card, verbose=False):
     elif "life" in card:
         info_parts.append(f'LIFE {card["life"]}')
 
-    info_parts.append(card["name"])
+    info_parts.append(card["translated_content_en"]["name"] if "translated_content_en" in card else card["name"])
 
     if verbose:
         if "rarity" in card:

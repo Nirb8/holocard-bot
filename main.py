@@ -175,7 +175,7 @@ async def show_oshi_holomen(ctx, arg):
 
     results = [
         card for card in oshi_dict.values()
-        if (fuzzy_match(search_name, card.get("translated_content_en", {}).get("name", "")))
+        if search_name in card["alias"]
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")

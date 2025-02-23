@@ -1,6 +1,7 @@
-from main import get_quick_info_string, get_embed_for_card
-
-class CardDropdown(discord.ui.Select):
+import discord
+from emoji_utils import get_quick_info_string
+from embeds import get_embed_for_card
+class CardDropdown:
     def __init__(self, cards):
         options = [
             discord.SelectOption(label=card["id"], value=get_quick_info_string(card))

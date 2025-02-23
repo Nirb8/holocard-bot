@@ -4,8 +4,8 @@ from embeds import get_embed_for_card
 class CardDropdown(discord.ui.Select):
     def __init__(self, cards):
         options = [
-            discord.SelectOption(label=get_quick_info_string(card, True), value=card["id"])
-            for card in cards
+            discord.SelectOption(label=idx, value=card["id"])
+            for idx, card in enumerate(cards)
         ]
         self.cards = cards
         super().__init__(placeholder="Select a card...", min_values=1, max_values=len(cards),

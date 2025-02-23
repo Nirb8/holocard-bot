@@ -36,7 +36,7 @@ def get_embed_for_card(card, full_size):
         # effects section
         if ("bloom_effect" in card):
             bloom = card["bloom_effect"]
-            bloom_title = f'<:bloom_effect:1323351068335411220>: {bloom["name"]}'
+            bloom_title = f'{emoji_utils.get_bloom_effect_emoji()}: {bloom["name"]}'
             bloom_text = bloom["text"]
             embed.add_field(name=bloom_title,value=bloom_text, inline=False)
         if ("collab_effect" in card):
@@ -46,7 +46,7 @@ def get_embed_for_card(card, full_size):
             embed.add_field(name=collab_title,value=collab_text, inline=False)
         if ("gift_effect" in card):
             gift = card["gift_effect"]
-            gift_title = f'<:gift:1323350975972380743>: {gift["name"]}'
+            gift_title = f'{emoji_utils.get_gift_effect_emoji()}: {gift["name"]}'
             gift_text = gift["text"]
             embed.add_field(name=gift_title,value=gift_text, inline=False)
 

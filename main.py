@@ -105,6 +105,22 @@ async def cshowidfull(ctx, arg):
     await ctx.respond(embed = embed)
 
 
+async def create_multiple_results_embed(ctx, results):
+    desc = [get_quick_info_string(card, verbose=True) for card in results]
+    card_info = ""
+    card_index = 1
+    for card in desc:
+        card_info += f"{card_index}. {card} \n"
+        card_index += 1
+    embed = discord.Embed(title="Results", description=card_info)
+
+    dropdown = CardDropdown(results)
+    view = discord.ui.View()
+    view.add_item(dropdown)
+    await ctx.send(dropdown.options)
+    await ctx.respond("Multiple results found. Please select a card:", embed=embed, view=view, ephemeral=True)
+
+
 @bot.slash_command(name="holomen", description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
     args = arg.split(" ")
@@ -131,19 +147,8 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        desc = [get_quick_info_string(card, True) for card in results]
-        card_info = ""
-        card_index = 1
-        for card in desc:
-            card_info += f"{card_index}. {card} \n"
-            card_index += 1
-        embed = discord.Embed(title="Results", description=card_info)
+        await create_multiple_results_embed(ctx, results)
 
-        dropdown = CardDropdown(results)
-        view = discord.ui.View()
-        view.add_item(dropdown)
-        await ctx.send(dropdown.options)
-        await ctx.respond("Multiple results found. Please select a card:", embed=embed, view=view, ephemeral=True)
 
 @bot.slash_command(name="support", description="search support card directly by Name. Supports Japanese or English translations.")
 async def show_support(ctx, arg):
@@ -161,6 +166,9 @@ async def show_support(ctx, arg):
     elif len(results) == 1:
         embed = get_embed_for_card(results[0], True)
         await ctx.respond(embed=embed)
+    else:
+       await create_multiple_results_embed(ctx, results)
+
 
 @bot.slash_command(name="oshi-holomen", description="search oshi-holomen card directly by Name. Supports Japanese or English translations.")
 async def show_oshi_holomen(ctx, arg):
@@ -181,8 +189,8 @@ async def show_oshi_holomen(ctx, arg):
         embed = get_embed_for_card(results[0], True)
         await ctx.respond(embed=embed)
     else:
-        dropdown = CardDropdown(results)
-        view = discord.ui.View()
+        await create_multiple_results_embed(ctx, results)
+
         view.add_item(dropdown)
         await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
 

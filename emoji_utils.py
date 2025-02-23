@@ -59,10 +59,20 @@ def get_color_emoji_tokkou(c):
 def get_collab_effect_emoji():
     return "<:collab_effect:1323350914073100338>"
 
+def get_gift_effect_emoji():
+    return "<:gift:1323350975972380743>"
+
+def get_bloom_effect_emoji():
+    return "<:bloom_effect:1323351068335411220>"
+
 def get_quick_info_string(card, verbose=False):
     info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
     if verbose:
         info_string += f' {card["rarity"]}'
+    if "bloom_effect" in card:
+        info_string += f' {get_bloom_effect_emoji()}'
     if "collab_effect" in card:
         info_string += f' {get_collab_effect_emoji()}'
+    if "gift_effect" in card:
+        info_string += f' {get_gift_effect_emoji()}'
     return info_string

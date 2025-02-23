@@ -1,6 +1,5 @@
 import discord
-
-from emoji_utils import get_quick_info_string, get_color_emoji, get_color_emoji_cheer, get_color_emoji_tokkou
+import emoji_utils
 
 # was going to extract all the specific happenings for each card into these functions later but might not end up doing that
 def get_oshi_holomem_embed(card, embed):
@@ -42,7 +41,7 @@ def get_embed_for_card(card, full_size):
             embed.add_field(name=bloom_title,value=bloom_text, inline=False)
         if ("collab_effect" in card):
             collab = card["collab_effect"]
-            collab_title = f'<:collab_effect:1323350914073100338>: {collab["name"]}'
+            collab_title = f'{emoji_utils.get_collab_effect()}: {collab["name"]}'
             collab_text = collab["text"]
             embed.add_field(name=collab_title,value=collab_text, inline=False)
         if ("gift_effect" in card):

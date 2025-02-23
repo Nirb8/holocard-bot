@@ -79,12 +79,13 @@ def get_quick_info_string(card, verbose=False):
 
     info_parts.append(card["name"])
 
-    if verbose and "rarity" in card:
-        info_parts.append(card["rarity"])
-    if "bloom_effect" in card:
-        info_parts.append(get_bloom_effect_emoji())
-    if "collab_effect" in card:
-        info_parts.append(get_collab_effect_emoji())
-    if "gift_effect" in card:
-        info_parts.append(get_gift_effect_emoji())
+    if verbose:
+        if "rarity" in card:
+            info_parts.append(card["rarity"])
+        if "bloom_effect" in card:
+            info_parts.append(get_bloom_effect_emoji())
+        if "collab_effect" in card:
+            info_parts.append(get_collab_effect_emoji())
+        if "gift_effect" in card:
+            info_parts.append(get_gift_effect_emoji())
     return ' / '.join(info_parts)

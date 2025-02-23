@@ -65,14 +65,26 @@ def get_gift_effect_emoji():
 def get_bloom_effect_emoji():
     return "<:bloom_effect:1323351068335411220>"
 
+
 def get_quick_info_string(card, verbose=False):
-    info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
-    if verbose:
-        info_string += f' {card["rarity"]}'
+    info_parts = []
+    if "bloom_level" in card:
+        info_parts.append(get_bloom_level_emoji(card["bloom_level"]))
+    if "type" in card:
+        info_parts.append(get_buzz_emoji(card["type"]))
+    if "hp" in card:
+        info_parts.append(f'HP {card["hp"]}')
+    elif "life" in card:
+        info_parts.append(f'LIFE {card["life"]}')
+
+    info_parts.append(card["name"])
+
+    if verbose and "rarity" in card:
+        info_parts.append(card["rarity"])
     if "bloom_effect" in card:
-        info_string += f' {get_bloom_effect_emoji()}'
+        info_parts.append(get_bloom_effect_emoji())
     if "collab_effect" in card:
-        info_string += f' {get_collab_effect_emoji()}'
+        info_parts.append(get_collab_effect_emoji())
     if "gift_effect" in card:
-        info_string += f' {get_gift_effect_emoji()}'
-    return info_string
+        info_parts.append(get_gift_effect_emoji())
+    return ' / '.join(info_parts)

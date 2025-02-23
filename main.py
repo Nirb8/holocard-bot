@@ -189,8 +189,5 @@ async def show_oshi_holomen(ctx, arg):
     else:
         await create_multiple_results_embed(ctx, results)
 
-        view.add_item(dropdown)
-        await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
-
 bot.run(os.getenv('TOKEN'))
 

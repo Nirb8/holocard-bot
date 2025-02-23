@@ -41,7 +41,7 @@ def get_embed_for_card(card, full_size):
             embed.add_field(name=bloom_title,value=bloom_text, inline=False)
         if ("collab_effect" in card):
             collab = card["collab_effect"]
-            collab_title = f'{emoji_utils.get_collab_effect()}: {collab["name"]}'
+            collab_title = f'{emoji_utils.get_collab_effect_emoji()}: {collab["name"]}'
             collab_text = collab["text"]
             embed.add_field(name=collab_title,value=collab_text, inline=False)
         if ("gift_effect" in card):

@@ -131,7 +131,7 @@ async def show_holomen(ctx, arg):
     results = [
         card for card in holomen_dict.values()
         if (search_bloom_level == card["bloom_level"].lower() or card["bloom_level"].lower().startswith(search_bloom_level) and
-            search_name in card["alias"] and
+            search_name in card["alias"].lower() and
             (search_hp is None or search_hp in card["hp"].lower()))
     ]
 
@@ -153,7 +153,7 @@ async def show_support(ctx, arg):
     search_name = strip_whitespace_brackets_and_quotes_and_lowercase(arg.lower())
     results = [
         card for card in support_dict.values()
-        if search_name in card["alias"]
+        if search_name in card["alias"].lower()
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] + card['name'] for card in results]}")
@@ -175,7 +175,7 @@ async def show_oshi_holomen(ctx, arg):
 
     results = [
         card for card in oshi_dict.values()
-        if search_name in card["alias"]
+        if search_name in card["alias"].lower()
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")

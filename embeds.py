@@ -18,7 +18,7 @@ def add_divider(embed):
 def get_embed_for_card(card, full_size):
     title = card["translated_content_en"]["name"]
     if ("color" in card):
-        title = f'{get_color_emoji(card["color"])}{title}'
+        title = f'{emoji_utils.get_color_emoji(card["color"])}{title}'
     # do generic fields
     embed = discord.Embed(title=title, thumbnail=card["image_url"], )
     if(full_size):
@@ -32,7 +32,7 @@ def get_embed_for_card(card, full_size):
             # barebones TL text, need to make the arts cost pretty for holomem
             embed.add_field(name="EN-TL:", value=card["translated_content_en"]["text"], inline=False)
             return get_oshi_holomem_embed(card, embed)
-        embed.add_field(name=get_quick_info_string(card), value="", inline=False)
+        embed.add_field(name=emoji_utils.get_quick_info_string(card), value="", inline=False)
         # effects section
         if ("bloom_effect" in card):
             bloom = card["bloom_effect"]
@@ -57,11 +57,11 @@ def get_embed_for_card(card, full_size):
             cost_str = art["cost"]
             cost_str_pretty = ''
             for c in cost_str:
-                cost_str_pretty += get_color_emoji_cheer(c)
+                cost_str_pretty += emoji_utils.get_color_emoji_cheer(c)
             art_desc = ""
             art_desc += "   " + art["damage"]
             if("tokkou" in art):
-                art_desc += "   " + get_color_emoji_tokkou(art["tokkou"])+" )  "
+                art_desc += "   " + emoji_utils.get_color_emoji_tokkou(art["tokkou"])+" )  "
             else:
                 art_desc += " )  "
             if(art["text"] == ""):

@@ -56,5 +56,8 @@ def get_color_emoji_tokkou(c):
     # going to need to add yellow later
     return "<:tokkou_50_null:1322065560187572366>" # default to colorless/null
 
-def get_quick_info_string(card):
-    return f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
+def get_quick_info_string(card, verbose=False):
+    info_string = f'{get_bloom_level_emoji(card["bloom_level"])}{get_buzz_emoji(card["type"])}/ HP {card["hp"]} / {card["name"]}'
+    if(verbose):
+        info_string += " " + card["rarity"]
+    return info_string

@@ -1,15 +1,15 @@
 import discord
 from emoji_utils import get_quick_info_string
 from embeds import get_embed_for_card
-class CardDropdown:
+class CardDropdown(discord.ui.Select):
     def __init__(self, cards):
         options = [
-            discord.SelectOption(label=card["id"], value=get_quick_info_string(card))
+            discord.SelectOption(label=get_quick_info_string(card, True), value=card["id"])
             for card in cards
         ]
+        self.cards = cards
         super().__init__(placeholder="Select a card...", min_values=1, max_values=len(cards),
                          options=options)
-        self.cards = cards
 
     async def callback(self, interaction: discord.Interaction):
         selected_card_id = self.values[0]

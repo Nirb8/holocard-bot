@@ -130,9 +130,11 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
+        print(results)
         dropdown = CardDropdown(results)
         view = discord.ui.View()
         view.add_item(dropdown)
+        await ctx.send(dropdown.options)
         await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
 
 @bot.slash_command(name="support", description="search support card directly by Name. Supports Japanese or English translations.")

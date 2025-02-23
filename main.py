@@ -122,17 +122,17 @@ async def create_multiple_results_embed(ctx, results):
 @bot.slash_command(name="holomen", description="search holomen card directly by Bloom lvl, Name, HP. Supports Japanese or English translations.")
 async def show_holomen(ctx, arg):
     args = arg.split(" ")
-    search_bloom_level = args[0]
-    search_name = args[1]
-    search_hp = args[2] if len(args) > 2 else None
+    search_bloom_level = args[0].lower()
+    search_name = args[1].lower()
+    search_hp = args[2].lower() if len(args) > 2 else None
 
     # Currently handles the case where translated_content_en is missing; eventually this can be removed
     # TODO: temp disabled fuzzy match, reenable when fixed
     results = [
         card for card in holomen_dict.values()
-        if (search_bloom_level.lower() in card["bloom_level"].lower() and
+        if (search_bloom_level == card["bloom_level"].lower() or card["bloom_level"].lower().startswith(search_bloom_level) and
             search_name in card["alias"] and
-            (search_hp is None or search_hp.lower() in card["hp"].lower()))
+            (search_hp is None or search_hp in card["hp"].lower()))
     ]
 
     await ctx.respond(f"Found {len(results)} results: {[card['id'] for card in results]}")

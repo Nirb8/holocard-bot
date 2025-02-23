@@ -71,7 +71,9 @@ def get_quick_info_string(card, verbose=False):
     if "bloom_level" in card:
         info_parts.append(get_bloom_level_emoji(card["bloom_level"]))
     if "type" in card:
-        info_parts.append(get_buzz_emoji(card["type"]))
+        buzz_emoji = get_buzz_emoji(card["type"])
+        if buzz_emoji is not "":
+            info_parts.append(buzz_emoji)
     if "hp" in card:
         info_parts.append(f'HP {card["hp"]}')
     elif "life" in card:

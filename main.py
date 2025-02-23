@@ -8,6 +8,7 @@ from card_dropdown import CardDropdown
 from dotenv import load_dotenv
 
 from embeds import get_embed_for_card
+from emoji_utils import get_quick_info_string
 load_dotenv()
 
 bot = discord.Bot()
@@ -130,12 +131,13 @@ async def show_holomen(ctx, arg):
         await ctx.respond(embed=embed)
     # handle multiple results
     else:
-        print(results)
+        embed = discord.Embed(title="Results", description= (get_quick_info_string(card, True) for card in results))
+
         dropdown = CardDropdown(results)
         view = discord.ui.View()
         view.add_item(dropdown)
         await ctx.send(dropdown.options)
-        await ctx.respond("Multiple results found. Please select a card:", view=view, ephemeral=True)
+        await ctx.respond("Multiple results found. Please select a card:", embed=embed, view=view, ephemeral=True)
 
 @bot.slash_command(name="support", description="search support card directly by Name. Supports Japanese or English translations.")
 async def show_support(ctx, arg):
